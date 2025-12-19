@@ -16,6 +16,8 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+CONF_REFRESH_TOKEN = "refresh_token"
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Rise Gardens from a config entry."""
@@ -24,10 +26,36 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     api = RiseGardensAPI(username, password)
 
-    # Authenticate
-    if not await hass.async_add_executor_job(api.authenticate):
+    # Set up callback to persist refresh token when rotated
+    def on_token_refresh(new_refresh_token: str) -> None:
+        """Handle refresh token rotation by persisting new token."""
+        _LOGGER.debug("Persisting rotated refresh token")
+        new_data = {**entry.data, CONF_REFRESH_TOKEN: new_refresh_token}
+        hass.config_entries.async_update_entry(entry, data=new_data)
+
+    api.set_token_refresh_callback(on_token_refresh)
+
+    # Try to restore session from stored refresh token
+    stored_refresh_token = entry.data.get(CONF_REFRESH_TOKEN)
+    auth_success = False
+
+    if stored_refresh_token:
+        _LOGGER.debug("Attempting to restore session with stored refresh token")
+        api.refresh_token = stored_refresh_token
+        auth_success = await hass.async_add_executor_job(api.refresh_access_token)
+
+    if not auth_success:
+        _LOGGER.debug("Fresh authentication required")
+        auth_success = await hass.async_add_executor_job(api.authenticate)
+
+    if not auth_success:
         _LOGGER.error("Failed to authenticate with Rise Gardens")
         return False
+
+    # Store refresh token after successful auth
+    if api.refresh_token and api.refresh_token != stored_refresh_token:
+        new_data = {**entry.data, CONF_REFRESH_TOKEN: api.refresh_token}
+        hass.config_entries.async_update_entry(entry, data=new_data)
 
     async def async_update_data():
         """Fetch data from Rise Gardens API."""
@@ -36,12 +64,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             device_data = await hass.async_add_executor_job(api.get_gardens_device_data)
 
             if gardens_list is None:
-                raise UpdateFailed("Failed to fetch gardens list")
+                # API methods already handle token refresh internally
+                # If we still get None, there's a real connectivity issue
+                raise UpdateFailed("Failed to fetch gardens list - API returned None")
 
             return {
                 "gardens_list": gardens_list,
                 "device_data": device_data or {},
             }
+        except UpdateFailed:
+            raise
         except Exception as ex:
             raise UpdateFailed(f"Error communicating with Rise Gardens API: {ex}")
 
