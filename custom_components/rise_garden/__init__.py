@@ -26,12 +26,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     api = RiseGardensAPI(username, password)
 
-    # Set up callback to persist refresh token when rotated
+    # Set up callback to persist refresh token when rotated (thread-safe)
     def on_token_refresh(new_refresh_token: str) -> None:
         """Handle refresh token rotation by persisting new token."""
         _LOGGER.debug("Persisting rotated refresh token")
         new_data = {**entry.data, CONF_REFRESH_TOKEN: new_refresh_token}
-        hass.config_entries.async_update_entry(entry, data=new_data)
+        # Schedule on event loop since this may be called from executor thread
+        hass.loop.call_soon_threadsafe(
+            lambda: hass.config_entries.async_update_entry(entry, data=new_data)
+        )
 
     api.set_token_refresh_callback(on_token_refresh)
 
