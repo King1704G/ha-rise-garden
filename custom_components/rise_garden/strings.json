@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Rise Gardens",
+        "description": "Enter your Rise Gardens app credentials.",
+        "data": {
+          "username": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid username or password"
+    },
+    "abort": {
+      "already_configured": "Account already configured"
+    }
+  }
+}

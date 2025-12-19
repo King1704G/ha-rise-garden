@@ -1,0 +1,7 @@
+{
+  "name": "Rise Gardens",
+  "homeassistant": "2023.1.0",
+  "render_readme": true,
+  "domains": ["light", "sensor"],
+  "iot_class": "cloud_polling"
+}

@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets - NEVER commit these
+*.env
+.env.*
+secrets.yaml
+credentials.json
+
+# APK/Reverse Engineering (if accidentally added)
+*.apk
+*.xapk
+*.apks
+*.bundle
+*.AppImage
+apk_*/
