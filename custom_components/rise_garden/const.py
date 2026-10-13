@@ -18,4 +18,4 @@ API_BASE = "https://prod-api.risegds.com/v2"
 UPDATE_INTERVAL = 60
 
 # Platforms
-PLATFORMS = ["sensor", "light"]
+PLATFORMS = ["sensor", "light", "binary_sensor"]

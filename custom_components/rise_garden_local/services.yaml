@@ -1,0 +1,40 @@
+send_command:
+  name: Send raw command
+  description: >-
+    Send a raw command line to the controller's local TCP interface and return
+    its reply. Use for discovery or advanced control. Reads are a bare word
+    (e.g. "lamp 1", "wpump"); writes add arguments (e.g. "lamp 1 50", "wpump on").
+    Caution: "ltimer set ..." replaces the whole light schedule, and a malformed
+    one clears it.
+  fields:
+    command:
+      name: Command
+      description: The raw command line (without CRLF).
+      required: true
+      example: "lamp 1 50"
+      selector:
+        text:
+    multiline:
+      name: Multi-line reply
+      description: Enable for dumps like "stack" that return several lines.
+      required: false
+      default: false
+      selector:
+        boolean:
+
+set_light_schedule:
+  name: Set light schedule
+  description: >-
+    Replace the controller's whole light schedule. Times are UTC (the
+    controller's clock). The schedule is checked against the controller's
+    127-character command limit before anything is sent, and read back after.
+  fields:
+    steps:
+      name: Steps
+      description: List of steps, each with start_utc (HH:MM:SS), duration_s and level (0-100, default 100).
+      required: true
+      example: >-
+        [{"start_utc": "11:00:00", "duration_s": 2400, "level": 25},
+        {"start_utc": "11:40:00", "duration_s": 43200, "level": 100}]
+      selector:
+        object:

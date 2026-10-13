@@ -1,0 +1,12 @@
+{
+  "domain": "rise_garden_local",
+  "name": "Rise Garden (Local)",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/AdrianCzebiniak/ha-rise-garden",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/AdrianCzebiniak/ha-rise-garden/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

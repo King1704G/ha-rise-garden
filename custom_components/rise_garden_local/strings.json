@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Rise Garden (Local)",
+        "description": "Connect directly to your garden controller on your LAN. No cloud account needed.",
+        "data": {
+          "host": "Controller IP address",
+          "port": "Port"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the controller. Check the IP, that it is powered on, and that TCP port 1000 is reachable."
+    },
+    "abort": {
+      "already_configured": "This controller is already configured"
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Send raw command",
+      "description": "Send a raw command line to the controller and return its reply.",
+      "fields": {
+        "command": {
+          "name": "Command",
+          "description": "The raw command line, e.g. 'lamp 1' or 'lamp 1 50'."
+        },
+        "multiline": {
+          "name": "Multi-line reply",
+          "description": "Enable for dumps like 'stack' that return several lines."
+        }
+      }
+    },
+    "set_light_schedule": {
+      "name": "Set light schedule",
+      "description": "Replace the controller's whole light schedule (times in UTC).",
+      "fields": {
+        "steps": {
+          "name": "Steps",
+          "description": "List of steps: start_utc (HH:MM:SS), duration_s, level (0-100)."
+        }
+      }
+    }
+  }
+}

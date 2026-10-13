@@ -193,27 +193,11 @@ class RiseGardensAPI:
             return response.json()
         return None
 
-    def get_light_schedule(self, garden_id: int) -> dict[str, Any] | None:
-        """Get light schedule for a garden."""
-        url = f"{API_BASE}/device/light-schedule"
-        response = self._api_request("GET", url, params={"garden_id": garden_id})
-        if response and response.status_code == 200:
-            return response.json()
-        return None
-
     def set_light_level(self, garden_id: int, level: int) -> bool:
         """Set light intensity (0-100)."""
         url = f"{API_BASE}/gardens/{garden_id}/device/light-level"
         response = self._api_request("PUT", url, json={"light_level": level})
         return response is not None and response.status_code == 200
-
-    def get_last_sensor_data(self, garden_id: int) -> dict[str, Any] | None:
-        """Get last sensor data for a garden."""
-        url = f"{API_BASE}/device/last_data_sensors"
-        response = self._api_request("GET", url, params={"garden_id": garden_id})
-        if response and response.status_code == 200:
-            return response.json()
-        return None
 
     def set_pump(self, garden_id: int, on: bool = True) -> bool:
         """Turn pump on or off."""
@@ -221,10 +205,10 @@ class RiseGardensAPI:
         response = self._api_request("POST", url, json={"pump": on})
         return response is not None and response.status_code == 200
 
-    def get_pump_schedule(self, garden_id: int) -> dict[str, Any] | None:
-        """Get pump schedule for a garden."""
-        url = f"{API_BASE}/device/pump/schedule"
-        response = self._api_request("GET", url, params={"garden_id": garden_id})
+    def get_garden_detail(self, garden_id: int) -> dict[str, Any] | None:
+        """Get detailed garden data including trays, nurseries, and crops."""
+        url = f"{API_BASE}/gardens/{garden_id}"
+        response = self._api_request("GET", url)
         if response and response.status_code == 200:
             return response.json()
         return None

@@ -71,9 +71,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 # If we still get None, there's a real connectivity issue
                 raise UpdateFailed("Failed to fetch gardens list - API returned None")
 
+            garden_details = {}
+            for garden in gardens_list.get("gardens", []):
+                garden_id = garden["id"]
+                detail = await hass.async_add_executor_job(api.get_garden_detail, garden_id)
+                if detail:
+                    garden_details[garden_id] = detail
+
             return {
                 "gardens_list": gardens_list,
                 "device_data": device_data or {},
+                "garden_details": garden_details,
             }
         except UpdateFailed:
             raise
